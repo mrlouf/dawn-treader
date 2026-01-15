@@ -1,34 +1,11 @@
 Dawn Treader has been deployed successfully!
 
-Application Components:
-- Frontend: {{ .Values.frontend.replicaCount }} replica(s)
-- Backend: {{ .Values.backend.replicaCount }} replica(s)
-- Redis: {{ .Values.redis.replicaCount }} replica(s)
-- Nginx: {{ .Values.nginx.replicaCount }} replica(s)
-- Blockchain: {{ .Values.blockchain.replicaCount }} replica(s)
-{{- if .Values.adminer.enabled }}
-- Adminer: {{ .Values.adminer.replicaCount }} replica(s)
-{{- end }}
-{{- if .Values.prometheus.enabled }}
-- Prometheus: {{ .Values.prometheus.replicaCount }} replica(s)
-{{- end }}
-{{- if .Values.grafana.enabled }}
-- Grafana: {{ .Values.grafana.replicaCount }} replica(s)
-{{- end }}
-
 Check the status:
   kubectl get pods -l "app.kubernetes.io/instance={{ .Release.Name }}"
   kubectl get services -l "app.kubernetes.io/instance={{ .Release.Name }}"
 
-Access your application:
-
-{{- if eq .Values.nginx.service.type "LoadBalancer" }}
-  export NGINX_IP=$(kubectl get svc nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo "Access via: http://$NGINX_IP"
-{{- else }}
-  kubectl port-forward svc/nginx 8080:80
-  echo "Access via: http://localhost:8080"
-{{- end }}
+Access the application at:
+https://localhost
 
 Frontend (direct):
   kubectl port-forward svc/frontend 5173:5173
@@ -56,15 +33,10 @@ Grafana:
 Prometheus:
   kubectl port-forward svc/prometheus 9090:9090
   echo "Access via: http://localhost:9090"
-{{- end }}
-
-View logs:
-  kubectl logs -f deployment/backend
-  kubectl logs -f deployment/frontend
-  kubectl logs -f deployment/redis
+{{- end }}s
 
 Update the deployment:
-  helm upgrade {{ .Release.Name }} ./helm/dawn-treader -f helm/secrets-override.yaml
+  helm upgrade {{ .Release.Name }} ./helm/dawn-treader
 
 Uninstall:
   helm uninstall {{ .Release.Name }}
