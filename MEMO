@@ -1,0 +1,15 @@
+Cluster name: dawn-treader
+
+Environments: harbor (local), open-sea (staging), far-shore (prod)
+
+ArgoCD app: navigator
+
+Terraform: charts or maps
+
+Ansible: crew
+
+Why that name?
+This is a personal homage to C.S. Lewis' work that I discovered at a young age and still enjoy to this day.
+Dawn Treader is an infrastructure journey - a ship built to carry an application from familiar shores into open waters.
+What begins as a local experiment becomes a living Kubernetes cluster, navigated by Helm charts and GitOps maps, crewed by automation, and guided steadily toward the cloud.
+This project explores how modern platforms are not just deployed, but sailed: deliberately, declaratively, and with curiosity for what lies beyond the horizon, in the hopes to find Aslan's country.

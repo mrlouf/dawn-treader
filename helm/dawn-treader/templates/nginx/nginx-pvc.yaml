@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-public
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.nginx.storage.public.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-certs
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.nginx.storage.certs.size }}

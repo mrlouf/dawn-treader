@@ -1,0 +1,192 @@
+#########################################################
+#                       NETWORK                         #
+#########################################################
+
+networks:
+  transcendence:
+    driver: bridge
+
+#########################################################
+#                       VOLUMES                         #
+#########################################################
+
+volumes:
+  public:
+    driver: local
+  userbase:
+    driver: local
+  certs:
+    driver: local
+
+  redis_data:
+    driver: local
+
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+#########################################################
+#                       SERVICES                        #
+#########################################################
+
+services:
+
+#                       NGINX                           #
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    environment:
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+    volumes:
+      - public:/usr/share/nginx/html:ro
+      - certs:/etc/letsencrypt
+    networks:
+      - transcendence
+
+#                       FRONTEND                        #
+
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - NODE_ENV=production
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - transcendence
+
+#                       BACKEND                         #
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./backend:/usr/src/app:consistent
+      - userbase:/usr/src/app/db
+      - /usr/src/app/node_modules
+      - ./frontend/static/avatars:/usr/src/app/public/avatars
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - SESSION_SECRET=${SESSION_SECRET}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    restart: always
+    networks:
+      - transcendence
+    depends_on:
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "sqlite3", "db/mydatabase.db", "SELECT 1"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+#                       REDIS                           #
+
+  redis:
+    build: ./redis
+    container_name: redis
+    env_file:
+      - .env
+    ports:
+      - "6380:6379"
+    restart: always
+    networks:
+      - transcendence
+    volumes:
+      - redis_data:/data
+
+#                       ADMINER                         #
+
+  adminer:
+    build: ./adminer
+    container_name: adminer
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - userbase:/db
+    ports:
+      - "127.0.0.1:1090:1090"
+    restart: always
+    networks:
+      - transcendence
+
+#                       BLOCKCHAIN                      #
+
+  blockchain:
+    build: ./blockchain
+    container_name: blockchain
+    ports:
+      - "3002:3002"
+    environment:
+      - AVALANCHE_RPC_URL="https://api.avax-test.network/ext/bc/C/rpc"
+      - PRIVATE_KEY=${BLOCKCHAIN_PRIVATE_KEY}
+      - FASTIFY_PORT=3002
+      - FASTIFY_ADDRESS=127.0.0.1
+      - NODE_ENV=production
+      - AVALANCHE_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+      - PRIVATE_KEY=${BLOCKCHAIN_PRIVATE_KEY}
+      - BLOCKCHAIN_PRIVATE_KEY=${BLOCKCHAIN_PRIVATE_KEY}
+    volumes:
+      - ./blockchain:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: always 
+    networks:
+      - transcendence
+
+#########################################################
+#                       MONITORING                      #
+#########################################################
+
+  prometheus:
+    build: ./monitoring/prometheus
+    container_name: prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    restart: always
+    volumes:
+      - prometheus_data:/prometheus
+    networks:
+      - transcendence
+      
+  grafana:
+    build: ./monitoring/grafana
+    container_name: grafana
+    ports:
+      - "127.0.0.1:3001:3000"
+    restart: always
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+    - GF_SECURITY_ADMIN_USER=admin
+    - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    env_file:
+      - .env
+    networks:
+      - transcendence
+

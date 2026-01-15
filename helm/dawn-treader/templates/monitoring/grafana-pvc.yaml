@@ -1,0 +1,16 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: grafana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.grafana.storage.size }}
+{{- end }}

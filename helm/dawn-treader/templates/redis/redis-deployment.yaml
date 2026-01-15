@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  replicas: {{ .Values.redis.replicaCount }}
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - name: redis
+          containerPort: 6379
+          protocol: TCP
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: redis
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data
+      restartPolicy: Always

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blockchain
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: blockchain
+spec:
+  type: {{ .Values.blockchain.service.type }}
+  ports:
+  - port: {{ .Values.blockchain.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: blockchain

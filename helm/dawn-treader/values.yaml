@@ -1,0 +1,115 @@
+# Global configuration
+global:
+  domain: localhost
+  storageClass: local-path  # k3d default
+
+imagePullPolicy: IfNotPresent
+
+# Backend
+backend:
+  replicaCount: 1
+  image:
+    repository: app-backend
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 3100
+  storage:
+    userbase:
+      size: 1Gi
+    avatars:
+      size: 500Mi
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Frontend
+frontend:
+  replicaCount: 1
+  image:
+    repository: app-frontend
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 5173
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Nginx
+nginx:
+  replicaCount: 1
+  image:
+    repository: app-nginx
+    tag: latest
+  service:
+    type: LoadBalancer
+    httpPort: 80
+    httpsPort: 443
+  storage:
+    certs:
+      size: 100Mi
+    public:
+      size: 500Mi
+
+# Redis
+redis:
+  replicaCount: 1
+  image:
+    repository: app-redis
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 6379
+  storage:
+    size: 500Mi
+
+# Blockchain
+blockchain:
+  replicaCount: 1
+  image:
+    repository: app-blockchain
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 3002
+  avalancheRpcUrl: "https://api.avax-test.network/ext/bc/C/rpc"
+
+# Adminer
+adminer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: app-adminer
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 1090
+
+# Monitoring
+prometheus:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: app-prometheus
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 9090
+  storage:
+    size: 2Gi
+
+grafana:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: app-grafana
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 3000
+  storage:
+    size: 1Gi
+  adminUser: admin

@@ -1,0 +1,57 @@
+{{- if .Values.adminer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+  labels:
+    {{- include "dawn-treader.labels" . | nindent 4 }}
+    app.kubernetes.io/component: adminer
+spec:
+  replicas: {{ .Values.adminer.replicaCount }}
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+      - name: adminer
+        image: "{{ .Values.adminer.image.repository }}:{{ .Values.adminer.image.tag }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 1090
+          protocol: TCP
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - name: userbase
+          mountPath: /db
+        readinessProbe:
+          tcpSocket:
+            port: 1090
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 1090
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+      volumes:
+      - name: userbase
+        persistentVolumeClaim:
+          claimName: backend-userbase
+      restartPolicy: Always
+{{- end }}
