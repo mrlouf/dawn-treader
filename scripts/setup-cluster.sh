@@ -128,5 +128,18 @@ echo $ARGOCD_PASSWORD
 #                   Deploy the app                 #
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 
-kubectl create namespace $NAMESPACE
+kubectl create namespace dawn-treader
+
+kubectl create secret generic dawn-treader-secrets \
+  --from-literal=jwtSecret="$(openssl rand -hex 32)" \
+  --from-literal=jwtRefreshSecret="$(openssl rand -hex 32)" \
+  --from-literal=jwtExpiresIn="15minutes" \
+  --from-literal=sessionSecret="$(openssl rand -hex 32)" \
+  --from-literal=blockchainPrivateKey="$(openssl rand -hex 32)" \
+  --from-literal=grafanaPassword="$(openssl rand -hex 32)" \
+  --from-literal=adminEmail="ft.transcendence.42.pong@gmail.com" \
+  --from-literal=domainName="localhost" \
+  -n dawn-treader
+
 kubectl apply -n argocd -f ./argocd/app-dev.yaml
+

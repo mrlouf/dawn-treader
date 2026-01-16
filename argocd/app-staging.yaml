@@ -8,13 +8,13 @@ spec:
   source:
     repoURL: https://github.com/mrlouf/dawn-treader.git
     targetRevision: HEAD
-    path: helm/dawn-treader
+    path: helm/
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: dawn-treader
   syncPolicy:
     automated:
       prune: true
