@@ -22,3 +22,12 @@ In other words, I had to translate from Docker Compose to Kubernetes while ensur
 
 The resulting Helm charts can be found in the `helm/dawn-treader` directory.
 
+## GitOps with ArgoCD
+
+Once the application was successfully migrated to Kubernetes, the next step was to implement a GitOps workflow using ArgoCD. Since the application is now packaged as Helm charts, ArgoCD can be used to automatically deploy and manage the application in the Kubernetes cluster based on the state defined in the Git repository.
+
+This involved setting up an ArgoCD instance in the k3d cluster, creating an application definition that points to the Helm charts in the repository, and configuring ArgoCD to monitor the repository for changes and automatically apply them to the cluster.
+
+I opted to host the application repo within the same repository as the infrastructure code instead of using a separate Git repository or a Helm chart repository. This simplifies the setup and allows for easier management of the entire project in a single place, by a single person (me).
+
+In the future, hosting the application in a Helm chart repository could be envisaged for better separation of concerns and easier sharing of the charts.

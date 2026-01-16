@@ -4,9 +4,16 @@ metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP" # Force HTTP backend protocol since ArgoCD server is in insecure mode
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    # HTTP → HTTPS
+    traefik.ingress.kubernetes.io/redirect-entry-point: websecure
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
+  tls:
+  - hosts:
+    - argocd.localhost
+    secretName: argocd-tls  # Certificat auto-signé ou Let's Encrypt
   rules:
   - host: argocd.localhost
     http:

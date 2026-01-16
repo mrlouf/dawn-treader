@@ -1,4 +1,4 @@
-#!/bin/
+#!/bin/bash
 
 #   This script sets up a local k3d Kubernetes cluster with Docker, Helm and the rest.
 #   It is intended for Debian-based systems.
@@ -83,17 +83,16 @@ sudo apt-get install helm
 #                   Build Docker images            #
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 
-docker build -t app-nginx:latest ./nginx
-docker build -t app-frontend:latest ./frontend
-docker build -t app-backend:latest ./backend
-docker build -t app-redis:latest ./redis
-docker build -t app-adminer:latest ./adminer
-docker build -t app-blockchain:latest ./blockchain
-docker build -t app-prometheus:latest ./monitoring/prometheus
-docker build -t app-grafana:latest ./monitoring/grafana
+# docker build -t app-nginx:latest ./nginx
+docker build -t app-frontend:latest ./app/frontend
+docker build -t app-backend:latest ./app/backend
+docker build -t app-redis:latest ./app/redis
+docker build -t app-adminer:latest ./app/adminer
+docker build -t app-blockchain:latest ./app/blockchain
+docker build -t app-prometheus:latest ./app/monitoring/prometheus
+docker build -t app-grafana:latest ./app/monitoring/grafana
 
 k3d image import \
-  app-nginx:latest \
   app-frontend:latest \
   app-backend:latest \
   app-redis:latest \
@@ -117,7 +116,17 @@ kubectl apply -n argocd -f ./argocd/ingress.yaml
 kubectl patch deployment argocd-server -n argocd --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure"}]'
 kubectl rollout status deployment/argocd-server -n argocd
 
+kubectl wait -n argocd --for=condition=Available deployment argocd-server --timeout=120s
+
 #   You should delete the argocd-initial-admin-secret from the Argo CD namespace once you changed the password.
 #   The secret serves no other purpose than to store the initially generated password in clear and can safely be deleted at any time.
 #   It will be re-created on demand by Argo CD if a new admin password must be re-generated.
 ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo $ARGOCD_PASSWORD
+
+#~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
+#                   Deploy the app                 #
+#~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
+
+kubectl create namespace $NAMESPACE
+kubectl apply -n argocd -f ./argocd/app-dev.yaml

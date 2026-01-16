@@ -38,22 +38,6 @@ frontend:
       memory: "512Mi"
       cpu: "500m"
 
-# Nginx
-nginx:
-  replicaCount: 1
-  image:
-    repository: app-nginx
-    tag: latest
-  service:
-    type: LoadBalancer
-    httpPort: 80
-    httpsPort: 443
-  storage:
-    certs:
-      size: 100Mi
-    public:
-      size: 500Mi
-
 # Redis
 redis:
   replicaCount: 1
