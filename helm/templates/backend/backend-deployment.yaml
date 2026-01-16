@@ -46,7 +46,6 @@ spec:
             secretKeyRef:
               name: {{ include "dawn-treader.fullname" . }}-secrets
               key: jwtRefreshSecret
-          value: "7d"
         - name: DOMAIN_NAME
           valueFrom:
             secretKeyRef:
