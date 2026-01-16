@@ -6,9 +6,6 @@
 
 set -e
 
-CLUSTERNAME="dawn-treader"
-NAMESPACE="app"
-
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Setup Docker                   #
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
@@ -57,14 +54,14 @@ fi
 
 # Create k3d cluster
 echo "Creating k3d cluster..."
-k3d cluster create $CLUSTERNAME --wait \
+k3d cluster create dawn-treader --wait \
   --port "80:80@loadbalancer" \
   --port "443:443@loadbalancer" \
   --port "5173:5173@loadbalancer" \
   --port "3100:3100@loadbalancer" \
   --agents 2
 
-export KUBECONFIG="$(k3d kubeconfig write $CLUSTERNAME)"
+export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Install Helm                   #
@@ -100,7 +97,7 @@ k3d image import \
   app-blockchain:latest \
   app-prometheus:latest \
   app-grafana:latest \
-  -c $CLUSTERNAME
+  -c dawn-treader
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Install ArgoCD                 #
