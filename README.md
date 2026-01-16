@@ -8,17 +8,17 @@ The focus is on reproducibility, declarative infrastructure, and clean delivery 
 
 ## The web application
 
-This project reuses a web application developed as an academic group project. The application allows users to play a game of Pong in the same spirit of the famous game released by Atari in 1972. 
+This project reuses a web application developed as an academic group project. The application is a game of Pong inspired by the famous game released by Atari in 1972, enhanced with social features such as user authentication, friend lists, chat, and matchmaking. 
 The application was originally divided into eight containers orchestrated with Docker Compose.
 More details about the application can be found in the [original repository](https://github.com/mrlouf/ft_transcendence).
 
 ## Migration to Kubernetes
 
-The first step of this project was to migrate the application from Docker Compose to Kubernetes/Helm while keeping the same architecture and functionalities. The goal was to have a local Kubernetes cluster running on k3d with the same application as before but deployed with Helm charts instead of Docker Compose files.
+The first step of this project was to migrate the application from Docker Compose to Kubernetes/Helm while keeping the same architecture and functionalities. The goal was to have a local Kubernetes cluster running on k3d with the same application as before but, deployed with Helm charts instead of Docker Compose files.
 
-This migration involved creating Helm charts for each component of the application, defining Kubernetes resources such as Deployments, Services, ConfigMaps, and PersistentVolumeClaims, and configuring the application to work in a Kubernetes environment.
+This migration involved creating the Helm charts for each component of the application, defining Kubernetes resources such as Deployments, Services, ConfigMaps, and PersistentVolumeClaims, and configuring the application to work in a Kubernetes environment.
 
-In short: I had to translate Docker Compose concepts to Kubernetes concepts while ensuring that the application remained functional and performant. This was also an opportunity to improve some aspects of the build, such as the manual allocation
-of resources (CPU, memory) to each pod and the implementation of liveness and readiness probes to replace the previous healthcheck mechanism.
+In other words, I had to translate from Docker Compose to Kubernetes while ensuring that the application remained functional and performant. This was also an opportunity to improve and fine-tune some aspects of the build, such as the manual allocation of resources (CPU, memory) to each pod or the liveness and readiness probes to replace the previous healthcheck mechanism.
 
 The resulting Helm charts can be found in the `helm/dawn-treader` directory.
+

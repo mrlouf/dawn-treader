@@ -102,3 +102,22 @@ k3d image import \
   app-prometheus:latest \
   app-grafana:latest \
   -c $CLUSTERNAME
+
+#~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
+#                   Install ArgoCD                 #
+#~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
+
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl wait -n argocd --for=condition=Ready pods --all --timeout=300s
+
+kubectl apply -n argocd -f ./argocd/ingress.yaml
+
+kubectl patch deployment argocd-server -n argocd --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure"}]'
+kubectl rollout status deployment/argocd-server -n argocd
+
+#   You should delete the argocd-initial-admin-secret from the Argo CD namespace once you changed the password.
+#   The secret serves no other purpose than to store the initially generated password in clear and can safely be deleted at any time.
+#   It will be re-created on demand by Argo CD if a new admin password must be re-generated.
+ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
