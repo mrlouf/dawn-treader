@@ -16,7 +16,6 @@
       var h = d.documentElement;
       var t = setTimeout(function() {
         h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
-        console.log('Font loading timeout - showing content anyway');
       }, config.scriptTimeout);
       
       var tk = d.createElement("script");
@@ -44,7 +43,6 @@
             },
             inactive: function() {
               h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
-              console.log('Font loading failed - using fallback');
             }
           });
         } catch(e) {
