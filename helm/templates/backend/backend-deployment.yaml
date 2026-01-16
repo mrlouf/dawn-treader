@@ -37,7 +37,10 @@ spec:
               name: {{ include "dawn-treader.fullname" . }}-secrets
               key: jwtSecret
         - name: JWT_EXPIRES_IN
-          value: "15minutes"
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "dawn-treader.fullname" . }}-secrets
+              key: jwtExpiresIn
         - name: JWT_REFRESH_SECRET
           valueFrom:
             secretKeyRef:
