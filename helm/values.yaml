@@ -9,8 +9,9 @@ imagePullPolicy: IfNotPresent
 backend:
   replicaCount: 1
   image:
-    repository: app-backend
+    repository: ghcr.io/mrlouf/dawn-treader-backend
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3100
@@ -28,8 +29,9 @@ backend:
 frontend:
   replicaCount: 1
   image:
-    repository: app-frontend
+    repository: ghcr.io/mrlouf/dawn-treader-frontend
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 5173
@@ -42,8 +44,9 @@ frontend:
 redis:
   replicaCount: 1
   image:
-    repository: app-redis
+    repository: ghcr.io/mrlouf/dawn-treader-redis
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 6379
@@ -54,8 +57,9 @@ redis:
 blockchain:
   replicaCount: 1
   image:
-    repository: app-blockchain
+    repository: ghcr.io/mrlouf/dawn-treader-blockchain
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3002
@@ -66,8 +70,9 @@ adminer:
   enabled: true
   replicaCount: 1
   image:
-    repository: app-adminer
+    repository: ghcr.io/mrlouf/dawn-treader-adminer
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 1090
@@ -77,8 +82,9 @@ prometheus:
   enabled: true
   replicaCount: 1
   image:
-    repository: app-prometheus
+    repository: ghcr.io/mrlouf/dawn-treader-prometheus
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9090
@@ -89,8 +95,9 @@ grafana:
   enabled: true
   replicaCount: 1
   image:
-    repository: app-grafana
+    repository: ghcr.io/mrlouf/dawn-treader-grafana
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3000

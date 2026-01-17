@@ -89,6 +89,24 @@ docker build -t app-blockchain:latest ./app/blockchain
 docker build -t app-prometheus:latest ./app/monitoring/prometheus
 docker build -t app-grafana:latest ./app/monitoring/grafana
 
+##############
+docker tag app-backend:latest ghcr.io/mrlouf/dawn-treader-backend:latest
+docker tag app-frontend:latest ghcr.io/mrlouf/dawn-treader-frontend:latest
+docker tag app-redis:latest ghcr.io/mrlouf/dawn-treader-redis:latest
+docker tag app-adminer:latest ghcr.io/mrlouf/dawn-treader-adminer:latest
+docker tag app-blockchain:latest ghcr.io/mrlouf/dawn-treader-blockchain:latest
+docker tag app-prometheus:latest ghcr.io/mrlouf/dawn-treader-prometheus:latest
+docker tag app-grafana:latest ghcr.io/mrlouf/dawn-treader-grafana:latest
+##############
+
+docker push ghcr.io/mrlouf/dawn-treader-backend:latest
+docker push ghcr.io/mrlouf/dawn-treader-frontend:latest
+docker push ghcr.io/mrlouf/dawn-treader-redis:latest
+docker push ghcr.io/mrlouf/dawn-treader-adminer:latest
+docker push ghcr.io/mrlouf/dawn-treader-blockchain:latest
+docker push ghcr.io/mrlouf/dawn-treader-prometheus:latest
+docker push ghcr.io/mrlouf/dawn-treader-grafana:latest
+
 k3d image import \
   app-frontend:latest \
   app-backend:latest \

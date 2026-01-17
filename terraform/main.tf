@@ -95,7 +95,7 @@ resource "aws_security_group" "cluster_sg" {
 
 resource "aws_instance" "cluster" {
   ami                     = data.aws_ami.debian.id
-  instance_type           = "t3.micro"
+  instance_type           = "m7i-flex.large"
   vpc_security_group_ids  = [resource.aws_security_group.cluster_sg.id]
   key_name                = aws_key_pair.home-lab.key_name
   subnet_id               = "subnet-0546fd4a2df0c1115" # eu-west-3a

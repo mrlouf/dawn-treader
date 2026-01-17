@@ -36,3 +36,4 @@ In the future, hosting the application in a Helm chart repository could be envis
 
 Once the application was successfully running in the local Kubernetes cluster with ArgoCD, I took the opportunity to streamline and optimise it. This involved several changes:
 - **Removing NGINX**: The original application used NGINX as a reverse proxy for the different services; in a Kubernetes environment, the ingress controller (Traefik in this case) handles routing and load balancing, making NGINX redundant. The pod was removed, although it could still be useful in the case that the frontend would serve static files.
+- **Removing Blockchain**: The original application included a blockchain container to deploy smart contracts for saving the game scores, but to be honest, it was more of a gimmick than a real feature. It added unnecessary complexity and overhead to the application, so I decided to remove it and simplify the architecture.
