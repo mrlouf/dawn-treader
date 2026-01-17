@@ -315,7 +315,7 @@ async function verifyTwoFa(request, reply) {
 				id: user.id_user,
 				username: user.username,
 				email: user.email,
-				twoFAEnabled: true,
+				twoFAEnabled: false,
 				twoFAVerified: true
 			}, process.env.JWT_SECRET, {
 				expiresIn: process.env.JWT_EXPIRES_IN
@@ -341,7 +341,7 @@ async function verifyTwoFa(request, reply) {
 				userId: user.id_user,
 				username: user.username,
 				email: user.email,
-				twoFAEnabled: true,
+				twoFAEnabled: false,
 				twoFAVerified: true
 			});
 
@@ -352,7 +352,7 @@ async function verifyTwoFa(request, reply) {
 				userId: user.id_user,
 				username: user.username,
 				email: user.email,
-				twoFAEnabled: true
+				twoFAEnabled: false
 			});
 		} else {
 			reply.code(400).send({
@@ -360,7 +360,7 @@ async function verifyTwoFa(request, reply) {
 			});
 		}
 	} catch (error) {
-		console.error('Error verifying 2FA token for user:', userId, error);
+		console.error('Error verifying 2FA token:', error);
 		reply.code(500).send({
 			message: 'Failed to verify 2FA token.'
 		});
