@@ -11,7 +11,6 @@ backend:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-backend
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3100
@@ -31,7 +30,6 @@ frontend:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-frontend
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 5173
@@ -46,7 +44,6 @@ redis:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-redis
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 6379
@@ -59,7 +56,6 @@ blockchain:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-blockchain
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3002
@@ -72,7 +68,6 @@ adminer:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-adminer
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 1090
@@ -84,7 +79,6 @@ prometheus:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-prometheus
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9090
@@ -97,7 +91,6 @@ grafana:
   image:
     repository: ghcr.io/mrlouf/dawn-treader-grafana
     tag: latest
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 3000

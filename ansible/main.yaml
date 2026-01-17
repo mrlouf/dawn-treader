@@ -1,0 +1,34 @@
+- name: Install Docker
+  hosts: myhosts
+  become: true
+  roles:
+    - docker
+  tags: installation
+
+- name: Install Kubernetes tools
+  hosts: myhosts
+  become: true
+  roles:
+    - kubernetes
+  tags: installation
+
+- name: Configure Kubernetes cluster
+  hosts: myhosts
+  become: true
+  roles:
+    - kubernetes
+  tags: configuration
+
+- name: Install Helm
+  hosts: myhosts
+  become: true
+  roles:
+    - helm
+  tags: installation
+
+- name: Deploy ArgoCD to Kubernetes cluster
+  hosts: myhosts
+  become: true
+  roles:
+    - kubernetes
+  tags: argocd

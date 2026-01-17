@@ -10,8 +10,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: dawn-treader-redirect-https@kubernetescrd
 spec:
   rules:
-  - host: {{ .Values.global.domain }}
-    http:
+  - http:
       paths:
       - path: /api
         pathType: Prefix

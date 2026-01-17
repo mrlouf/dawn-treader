@@ -1,0 +1,14 @@
+- name: Install Kubernetes tools
+  include_tasks: installation.yaml
+  tags:
+    - installation
+
+- name: Configure Kubernetes cluster
+  include_tasks: configuration.yaml
+  tags:
+    - configuration
+
+- name: Deploy ArgoCD to Kubernetes cluster
+  include_tasks: argocd.yaml
+  tags:
+    - argocd
