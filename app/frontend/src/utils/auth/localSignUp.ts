@@ -1,6 +1,8 @@
 import { getApiUrl } from '../../config/api';
 
-export async function localSignUp(username: string, email: string, password: string): Promise<{success: boolean, message: string, userId?: number, username?: string, email?: string, token?: string}> {
+export async function localSignUp(username: string, email: string, password: string): 
+	Promise<{success: boolean, message: string, userId?: number, username?: string, email?: string, token?: string}>
+{
 	try {
 
 		const response = await fetch(getApiUrl('/auth/signup'), {
@@ -19,7 +21,6 @@ export async function localSignUp(username: string, email: string, password: str
 			};
 		}
 
-		// Store user data in sessionStorage on successful registration
 		sessionStorage.setItem('username', data.username);
 		sessionStorage.setItem('userId', data.userId);
 		sessionStorage.setItem('email', data.email);
