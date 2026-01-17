@@ -1,6 +1,6 @@
 # Global configuration
 global:
-  domain: localhost
+  domain: mrlouf.studio
   storageClass: local-path  # k3d default
 
 imagePullPolicy: IfNotPresent
