@@ -61,7 +61,9 @@ k3d cluster create dawn-treader --wait \
   --port "3100:3100@loadbalancer" \
   --agents 2
 
-export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
+# export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
+mkdir -p ~/.kube
+k3d kubeconfig merge dawn-treader --kubeconfig-merge-default
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Install Helm                   #

@@ -18,20 +18,20 @@
   tags:
     - argocd
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/main/argocd/ingress.yaml
+    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/develop/argocd/ingress.yaml
     dest: ./ingress.yaml
 
 - name: Get the ArgoCD app manifest
   tags:
     - argocd
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/main/argocd/app-dev.yaml
+    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/develop/argocd/app-dev.yaml
     dest: ./app-dev.yaml
 
 - name: Apply ArgoCD ingress configuration
   tags:
     - argocd
-  shell: kubectl apply -n argocd -f ./argocd/ingress.yaml
+  shell: kubectl apply -n argocd -f ./ingress.yaml
 
 - name: Wait for ArgoCD server rollout to complete
   tags:
