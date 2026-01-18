@@ -1,0 +1,35 @@
+- name: Create ArgoCD namespace
+  shell: kubectl create namespace argocd || echo "Namespace argocd already exists"
+
+- name: Deploy ArgoCD installation manifests
+  shell: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+- name: Wait for ArgoCD pods to be ready
+  shell: kubectl wait -n argocd --for=condition=Ready pods --all --timeout=300s
+
+- name: Create folder for ArgoCD manifests
+  shell: mkdir -p ./argocd
+
+- name: Get the ArgoCD ingress file
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/develop/argocd/ingress.yaml
+    dest: ./argocd/ingress.yaml
+
+- name: Get the ArgoCD app manifest
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/mrlouf/dawn-treader/develop/argocd/app-dev.yaml
+    dest: ./argocd/app-dev.yaml
+
+- name: Apply ArgoCD ingress configuration
+  shell: kubectl apply -n argocd -f ./argocd/ingress.yaml
+
+- name: Wait for ArgoCD server rollout to complete
+  shell: kubectl rollout status deployment/argocd-server -n argocd
+
+- name: Wait for ArgoCD server to be available
+  shell: kubectl wait -n argocd --for=condition=Available deployment argocd-server --timeout=120s
+
+- name: Retrieve ArgoCD initial admin password
+  shell: |
+    ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+    echo $ARGOCD_PASSWORD > /tmp/argocd_initial_admin_password.txt

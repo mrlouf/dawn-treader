@@ -100,6 +100,11 @@ resource "aws_instance" "cluster" {
   key_name                = aws_key_pair.home-lab.key_name
   subnet_id               = "subnet-0546fd4a2df0c1115" # eu-west-3a
 
+  root_block_device {
+    volume_size = 30  # ~8 GB -> 30 GB
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "dawn-treader-cluster"
   }

@@ -30,5 +30,19 @@
   hosts: myhosts
   become: true
   roles:
-    - kubernetes
+    - argocd
   tags: argocd
+
+- name: Deploy Dawn Treader application via ArgoCD
+  hosts: myhosts
+  become: true
+  roles:
+    - app
+  tags: deployment
+
+- name: Destroy Dawn Treader application via ArgoCD
+  hosts: myhosts
+  become: true
+  roles:
+    - app
+  tags: destruction
