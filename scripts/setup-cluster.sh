@@ -6,9 +6,6 @@
 
 set -e
 
-CLUSTERNAME="dawn-treader"
-NAMESPACE="app"
-
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Setup Docker                   #
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
@@ -57,14 +54,16 @@ fi
 
 # Create k3d cluster
 echo "Creating k3d cluster..."
-k3d cluster create $CLUSTERNAME --wait \
+k3d cluster create dawn-treader --wait \
   --port "80:80@loadbalancer" \
   --port "443:443@loadbalancer" \
   --port "5173:5173@loadbalancer" \
   --port "3100:3100@loadbalancer" \
   --agents 2
 
-export KUBECONFIG="$(k3d kubeconfig write $CLUSTERNAME)"
+# export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
+mkdir -p ~/.kube
+k3d kubeconfig merge dawn-treader --kubeconfig-merge-default
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Install Helm                   #
@@ -92,6 +91,24 @@ docker build -t app-blockchain:latest ./app/blockchain
 docker build -t app-prometheus:latest ./app/monitoring/prometheus
 docker build -t app-grafana:latest ./app/monitoring/grafana
 
+##############
+docker tag app-backend:latest ghcr.io/mrlouf/dawn-treader-backend:latest
+docker tag app-frontend:latest ghcr.io/mrlouf/dawn-treader-frontend:latest
+docker tag app-redis:latest ghcr.io/mrlouf/dawn-treader-redis:latest
+docker tag app-adminer:latest ghcr.io/mrlouf/dawn-treader-adminer:latest
+docker tag app-blockchain:latest ghcr.io/mrlouf/dawn-treader-blockchain:latest
+docker tag app-prometheus:latest ghcr.io/mrlouf/dawn-treader-prometheus:latest
+docker tag app-grafana:latest ghcr.io/mrlouf/dawn-treader-grafana:latest
+##############
+
+docker push ghcr.io/mrlouf/dawn-treader-backend:latest
+docker push ghcr.io/mrlouf/dawn-treader-frontend:latest
+docker push ghcr.io/mrlouf/dawn-treader-redis:latest
+docker push ghcr.io/mrlouf/dawn-treader-adminer:latest
+docker push ghcr.io/mrlouf/dawn-treader-blockchain:latest
+docker push ghcr.io/mrlouf/dawn-treader-prometheus:latest
+docker push ghcr.io/mrlouf/dawn-treader-grafana:latest
+
 k3d image import \
   app-frontend:latest \
   app-backend:latest \
@@ -100,7 +117,7 @@ k3d image import \
   app-blockchain:latest \
   app-prometheus:latest \
   app-grafana:latest \
-  -c $CLUSTERNAME
+  -c dawn-treader
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 #                   Install ArgoCD                 #

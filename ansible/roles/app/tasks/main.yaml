@@ -1,0 +1,9 @@
+- name: Deploy application via ArgoCD
+  include_tasks: deployment.yaml
+  tags:
+    - deployment
+
+- name: Destroy application via ArgoCD
+  include_tasks: destruction.yaml
+  tags:
+    - destruction
