@@ -1,2 +1,0 @@
-- name: Destroy application via ArgoCD
-  shell: kubectl delete -n argocd -f ./argocd/app-dev.yaml || echo "Dawn Treader application not found in ArgoCD"
