@@ -18,6 +18,13 @@ spec:
   - host: mrlouf.studio
     http:
       paths:
+      - path: /ws
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 3100
       - path: /api
         pathType: Prefix
         backend:
