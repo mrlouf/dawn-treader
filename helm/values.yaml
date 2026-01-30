@@ -3,7 +3,7 @@ global:
   domain: mrlouf.studio
   storageClass: local-path  # k3d default
 
-imagePullPolicy: IfNotPresent
+imagePullPolicy: Always
 
 # Backend
 backend:
