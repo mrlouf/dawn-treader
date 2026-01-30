@@ -1,0 +1,17 @@
+- name: Install k3d on Debian-based systems
+  ansible.builtin.get_url:
+    dest: /usr/local/bin/install.sh
+    mode: '0755'
+    url: https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh
+
+- name: Run k3d install script
+  ansible.builtin.command: bash /usr/local/bin/install.sh
+
+- name: Download kubectl binary
+  ansible.builtin.get_url:
+    dest: ./
+    mode: '0755'
+    url: https://dl.k8s.io/release/v1.35.0/bin/linux/amd64/kubectl
+
+- name: Install kubectl
+  ansible.builtin.command: install -o root -g root -m 0755 ./kubectl /usr/local/bin/kubectl

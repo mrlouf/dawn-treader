@@ -1,0 +1,28 @@
+- name: Create k3d cluster
+  ansible.builtin.command: k3d cluster create dawn-treader --wait --port "80:80@loadbalancer" --port "443:443@loadbalancer" --port "5173:5173@loadbalancer" --port "3100:3100@loadbalancer" --agents "2"
+
+- name: Ensure .kube directory exists
+  file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Write k3d kubeconfig
+  shell: k3d kubeconfig write dawn-treader
+  become_user: "{{ ansible_user }}"
+  changed_when: false
+
+- name: Merge k3d kubeconfig into default config
+  shell: k3d kubeconfig merge dawn-treader --kubeconfig-merge-default
+  become_user: "{{ ansible_user }}"
+  args:
+    creates: /home/{{ ansible_user }}/.kube/config
+
+- name: Set correct permissions on kubeconfig
+  file:
+    path: "/home/{{ ansible_user }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'

@@ -1,0 +1,62 @@
+- name: Build Frontend
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/frontend
+      name: app-frontend
+      tag: latest
+
+- name: Build Backend
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/backend
+      name: app-backend
+      tag: latest
+
+- name: Build Redis
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/redis
+      name: app-redis
+      tag: latest
+
+- name: Build Adminer
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/adminer
+      name: app-adminer
+      tag: latest
+
+- name: Build Blockchain
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/blockchain
+      name: app-blockchain
+      tag: latest
+
+- name: Build Prometheus
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/prometheus
+      name: app-prometheus
+      tag: latest
+
+- name: Build Grafana
+  tags:
+    - build
+  docker_image:
+    build:
+      path: ./app/grafana
+      name: app-grafana
+      tag: latest

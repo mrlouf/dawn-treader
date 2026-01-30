@@ -1,0 +1,10 @@
+- name: Install Docker
+  include_tasks: installation.yaml
+  tags:
+    - installation
+
+- name: Build Docker images
+  include_tasks: build.yaml
+  tags:
+    - build
+

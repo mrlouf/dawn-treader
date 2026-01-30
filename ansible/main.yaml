@@ -1,0 +1,48 @@
+- name: Install Docker
+  hosts: myhosts
+  become: true
+  roles:
+    - docker
+  tags: installation, docker
+
+- name: Install Kubernetes tools
+  hosts: myhosts
+  become: true
+  roles:
+    - kubernetes
+  tags: installation, kubernetes
+
+- name: Configure Kubernetes cluster
+  hosts: myhosts
+  become: true
+  roles:
+    - kubernetes
+  tags: configuration, kubernetes
+
+- name: Install Helm
+  hosts: myhosts
+  become: true
+  roles:
+    - helm
+  tags: installation, helm
+
+- name: Deploy ArgoCD to Kubernetes cluster
+  hosts: myhosts
+  become: true
+  roles:
+    - argocd
+  tags: argocd
+
+- name: Deploy Dawn Treader application via ArgoCD
+  hosts: myhosts
+  become: true
+  roles:
+    - app
+  tags: deployment
+
+- name: Destroy Dawn Treader application via ArgoCD
+  hosts: myhosts
+  become: true
+  roles:
+    - app
+  tags: destruction

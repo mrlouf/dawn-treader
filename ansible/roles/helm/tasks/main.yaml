@@ -1,0 +1,21 @@
+- name: Install Helm
+  tags:
+    - installation
+  ansible.builtin.get_url:
+    dest: /usr/local/bin/helm
+    mode: '0755'
+    url: https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz
+
+- name: Extract Helm binary
+  tags:
+    - installation
+  ansible.builtin.unarchive:
+    src: /usr/local/bin/helm
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Verify Helm installation
+  tags:
+    - installation
+  ansible.builtin.command: helm version
