@@ -52,14 +52,19 @@ else
     rm kubectl
 fi
 
-# Create k3d cluster
-echo "Creating k3d cluster..."
-k3d cluster create dawn-treader --wait \
-  --port "80:80@loadbalancer" \
-  --port "443:443@loadbalancer" \
-  --port "5173:5173@loadbalancer" \
-  --port "3100:3100@loadbalancer" \
-  --agents 2
+if k3d cluster list | grep -q "dawn-treader"; then
+    echo "k3d cluster 'dawn-treader' already exists"
+else
+    # Create k3d cluster
+    echo "Creating k3d cluster..."
+    k3d cluster create dawn-treader --wait \
+      --port "80:80@loadbalancer" \
+      --port "443:443@loadbalancer" \
+      --port "5173:5173@loadbalancer" \
+      --port "3100:3100@loadbalancer" \
+      --agents 2
+fi
+
 
 # export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
 mkdir -p ~/.kube
