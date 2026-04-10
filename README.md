@@ -28,6 +28,14 @@ In other words, I had to _translate_ from Docker Compose to Kubernetes while ens
 
 The resulting Helm charts can be found in the `helm/dawn-treader` directory.
 
+## Using GitHub Container Registry
+
+Since the application is now running in Kubernetes, the Docker images need to be accessible from the cluster. To achieve this, I decided to use GitHub Container Registry (GHCR) to host the Docker images publicly. This allows the Kubernetes cluster to pull the images directly from GHCR without needing to set up a private registry or use local images.
+
+I used a GitHub token with the appropriate permissions to authenticate with GHCR and push the Docker images from the local machine. The ArgoCD application definition then points to the specific image tags in GHCR to deploy the application in the Kubernetes cluster.
+
+[How to use GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+
 ## GitOps with ArgoCD
 
 Once the application was successfully migrated to Kubernetes, the next step was to implement a GitOps workflow using ArgoCD. Since the application is now packaged as Helm charts, ArgoCD can be used to automatically deploy and manage the application in the Kubernetes cluster based on the state defined in the Git repository.

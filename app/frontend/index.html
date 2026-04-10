@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musical Sync</title>
+	<link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Musical Sync</h1>
+        <p class="subtitle">Synchronise your playlists across platforms</p>
+
+        <div style="margin-bottom: 20px" class="button-group">
+            <button onclick="getPlaylistFromDeezer()">
+                Check Sync status between Deezer and Spotify
+            </button>
+        </div>
+
+        <div id="status-container">
+            <div class="sync-status">
+                <h2 style="margin-bottom: 20px; color: #333;">Sync Status</h2>
+                <div class="status-item">
+                    <span class="status-label">Backend Status:</span>
+                    <span class="status-value" id="backend-status">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Deezer Connection:</span>
+                    <span class="status-value" id="deezer-status">Not connected</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Spotify Connection:</span>
+                    <span class="status-value" id="spotify-status">Not connected</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Sync:</span>
+                    <span class="status-value" id="last-sync">Never</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="checkBackendHealth()">
+                Check Backend Health
+            </button>
+            <button onclick="refreshSyncStatus()">
+                Refresh Sync Status
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function checkBackendHealth() {
+            fetch('/api/health')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('backend-status').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('backend-status').innerHTML = '❌ Error';
+                });
+        }
+
+        function refreshSyncStatus() {
+            fetch('/api/sync-status')
+                .then(response => response.text())
+                .then(html => {
+                    // Safe to use innerHTML here as the backend returns trusted HTML
+                    document.getElementById('status-container').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        async function getPlaylistFromDeezer() {
+            const container = document.getElementById('status-container');
+            // show a loading state
+            container.innerHTML = `<div class="sync-status">
+                <h2 style="margin-bottom: 20px; color: #333;">Sync Status</h2>
+                <div class="status-item">
+                    <span class="status-label">Loading…</span>
+                    <span class="status-value">⌛</span>
+                </div>
+            </div>`;
+
+            try {
+                const res = await fetch('/api/playlist/deezer');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                const nbDeezer = data && data.nb_tracks_Deezer != null ? data.nb_tracks_Deezer : 'N/A';
+                const nbSpotify = data && data.nb_tracks_Spotify != null ? data.nb_tracks_Spotify : 'N/A';
+
+                const content = `<div class="sync-status">
+                    <h2 style="margin-bottom: 20px; color: #333;">Sync Status</h2>
+                    <div class="status-item">
+                        <span class="status-label">Deezer tracks: </span>
+                        <span class="status-value" id="tracks-deezer">${nbDeezer}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Spotify tracks: </span>
+                        <span class="status-value" id="tracks-spotify">${nbSpotify}</span>
+                    </div>
+                </div>`;
+
+                container.innerHTML = content;
+            } catch (err) {
+                console.error('Error fetching playlist:', err);
+                container.innerHTML = `<div class="sync-status">
+                    <div class="status-item">
+                        <span class="status-label">Error:</span>
+                        <span class="status-value">Failed to load playlist</span>
+                    </div>
+                </div>`;
+            }
+        }
+
+		function loginSpotify() {
+            fetch('/api/login/spotify')
+                .then(response => response.text())
+
+                .then(html => {
+                    document.getElementById('status-container').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendHealth();
+        });
+    </script>
+</body>
+</html>

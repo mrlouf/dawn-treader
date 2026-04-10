@@ -4,6 +4,15 @@
 #   It is intended for Debian-based systems.
 #   In the future, this script should be refactored into Ansible roles for better maintainability.
 
+
+# Colours
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+
 set -e
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
@@ -12,7 +21,9 @@ set -e
 
 # Install Docker first if not present:
 if ! systemctl is-active --quiet docker; then
-    echo "Installing Docker..."
+
+    echo -e "${YELLOW}Installing Docker...${NC}"
+
     # Add Docker's official GPG key:
     sudo apt-get update
     sudo apt-get install -y ca-certificates curl
@@ -31,32 +42,32 @@ if ! systemctl is-active --quiet docker; then
     sudo systemctl start docker
     sudo systemctl enable docker
 else
-    echo "Docker already installed and running"
+    echo -e "${GREEN}Docker already installed and running${NC}"
 fi
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
-#                   Setup k3d                      #
+#                   Setup k3d + kubectl            #
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 
 # Install k3d 
-echo "Starting k3d..."
+echo -e "${BLUE}Starting k3d...${NC}"
 wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
 # Install kubectl
 if command -v kubectl &> /dev/null; then
-    echo "kubectl is already installed"
+    echo -e "${GREEN}kubectl is already installed${NC}"
 else
-    echo "kubectl not found, installing..."
+    echo -e "${YELLOW}kubectl not found, installing...${NC}"
     curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     rm kubectl
 fi
 
 if k3d cluster list | grep -q "dawn-treader"; then
-    echo "k3d cluster 'dawn-treader' already exists"
+    echo -e "${YELLOW}k3d cluster 'dawn-treader' already exists${NC}"
 else
     # Create k3d cluster
-    echo "Creating k3d cluster..."
+    echo -e "${BLUE}Creating k3d cluster...${NC}"
     k3d cluster create dawn-treader --wait \
       --port "80:80@loadbalancer" \
       --port "443:443@loadbalancer" \
@@ -67,7 +78,7 @@ fi
 
 
 # export KUBECONFIG="$(k3d kubeconfig write dawn-treader)"
-mkdir -p ~/.kube
+mkdir -vp ~/.kube
 k3d kubeconfig merge dawn-treader --kubeconfig-merge-default
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
@@ -75,10 +86,10 @@ k3d kubeconfig merge dawn-treader --kubeconfig-merge-default
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
 
 if command -v helm &> /dev/null; then
-    echo "Helm is already installed"
+    echo -e "${GREEN}Helm is already installed${NC}"
 else
     # Install Helm
-    echo -e "\e[34mInstalling Helm...\e[0m"
+    echo -e "${BLUE}Installing Helm...${NC}"
     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
     chmod 700 get_helm.sh
     ./get_helm.sh && rm get_helm.sh
@@ -92,38 +103,18 @@ fi
 # docker build -t app-nginx:latest ./nginx
 docker build -t app-frontend:latest ./app/frontend
 docker build -t app-backend:latest ./app/backend
-docker build -t app-redis:latest ./app/redis
-docker build -t app-adminer:latest ./app/adminer
-docker build -t app-blockchain:latest ./app/blockchain
-docker build -t app-prometheus:latest ./app/monitoring/prometheus
-docker build -t app-grafana:latest ./app/monitoring/grafana
 
 ##############
 docker tag app-backend:latest ghcr.io/mrlouf/dawn-treader-backend:latest
 docker tag app-frontend:latest ghcr.io/mrlouf/dawn-treader-frontend:latest
-docker tag app-redis:latest ghcr.io/mrlouf/dawn-treader-redis:latest
-docker tag app-adminer:latest ghcr.io/mrlouf/dawn-treader-adminer:latest
-docker tag app-blockchain:latest ghcr.io/mrlouf/dawn-treader-blockchain:latest
-docker tag app-prometheus:latest ghcr.io/mrlouf/dawn-treader-prometheus:latest
-docker tag app-grafana:latest ghcr.io/mrlouf/dawn-treader-grafana:latest
 ##############
 
 docker push ghcr.io/mrlouf/dawn-treader-backend:latest
 docker push ghcr.io/mrlouf/dawn-treader-frontend:latest
-docker push ghcr.io/mrlouf/dawn-treader-redis:latest
-docker push ghcr.io/mrlouf/dawn-treader-adminer:latest
-docker push ghcr.io/mrlouf/dawn-treader-blockchain:latest
-docker push ghcr.io/mrlouf/dawn-treader-prometheus:latest
-docker push ghcr.io/mrlouf/dawn-treader-grafana:latest
 
 k3d image import \
   app-frontend:latest \
   app-backend:latest \
-  app-redis:latest \
-  app-adminer:latest \
-  app-blockchain:latest \
-  app-prometheus:latest \
-  app-grafana:latest \
   -c dawn-treader
 
 #~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=#
