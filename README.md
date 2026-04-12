@@ -7,6 +7,9 @@
 ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white)
 
+
+**Update April 2026: Due to the hosting costs of the infrastructure on AWS, I decided to take down the application. It will come back as soon as I have found an acceptable alternative, like on-premise hosting at home.**
+
 Dawn Treader is a cloud infrastructure project designed to showcase the evolution of a web application from local development to production-grade cloud deployment.
 
 Starting with a local Kubernetes cluster running on **k3d**, the project adopts GitOps principles with **ArgoCD**, package management via **Helm**, and progressively extends to **AWS** using **Terraform** and **Ansible**.
@@ -114,9 +117,7 @@ I understand now why Docker, Kubernetes or Helm share maritime-themed names. In 
 
 ## Review and feedback
 
-If you have made it this far and are still reading, thank you very much for your interest; I hope that you enjoyed this journey.
-
-If you'd like to try out the application, it is available at: [https://mrlouf.studio](https://mrlouf.studio) as of January 2026.
+If you have made it this far and are still reading, thank you very much for your interest; I hope that you enjoyed it.
 
 I welcome any review or feedback, especially regarding the usage I have made of the Kubernetes platform and DevOps practices. Feel free to open an issue or a pull request if you have suggestions for improvements, optimisations, or additional features.
 
